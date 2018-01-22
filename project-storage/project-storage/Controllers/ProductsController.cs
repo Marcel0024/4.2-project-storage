@@ -12,21 +12,12 @@ namespace Project_storage.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+           return Content("<h1> Online </h1>");
         }
 
-        public IActionResult About()
+        public IActionResult All()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            return Json(new { Hoi = "lol"});
         }
 
         public IActionResult Error()
