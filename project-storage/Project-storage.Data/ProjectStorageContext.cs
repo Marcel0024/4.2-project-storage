@@ -20,6 +20,5 @@ namespace Project_storage.Data
         {
             base.OnModelCreating(builder);
         }
-
     }
 }
