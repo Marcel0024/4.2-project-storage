@@ -47,7 +47,7 @@ namespace Project_storage
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "api/{controller=Products}/{action=Index}/{id?}");
+                    template: "{controller=Products}/{action=Index}/{id?}");
             });
         }
     }

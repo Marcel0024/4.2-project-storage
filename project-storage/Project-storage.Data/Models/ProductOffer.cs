@@ -8,8 +8,10 @@ namespace Project_storage.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Product Product { get; set; }
+        public virtual Product Product { get; set; }
 
-        public Location Location { get; set; }
+        public virtual Location Location { get; set; }
+
+     //   public int Amount { get; set; }
     }
 }

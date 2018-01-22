@@ -14,6 +14,6 @@ namespace Project_storage.Data.Models
 
         public string Name { get; set; }
 
-        public HashSet<Product> Products { get; set; }
+        public virtual HashSet<Product> Products { get; set; }
     }
 }

@@ -16,6 +16,6 @@ namespace Project_storage.Data.Models
 
         public decimal Price { get; set; }
 
-        public ProductCategory ProductCategory { get; set; }
+        public virtual ProductCategory ProductCategory { get; set; }
     }
 }
