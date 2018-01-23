@@ -1,0 +1,22 @@
+﻿@model Project_storage.Areas.Manage.Models.ProductOffers.ProductOfferVM
+
+<div class="form-group">
+    <input asp-for="Id" type="hidden" />
+
+    <div class="col-md-4">
+        <label class="control-label">Voorraad </label>
+        <input asp-for="Amount" class="form-control" />
+    </div>
+    <div class="col-md-4">
+        <label class="control-label">Locatie</label>
+        <select asp-for="ChosenLocationId" asp-items="Model.Locations" class="form-control">
+            <option> - Kies - </option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="control-label">BasisProduct</label>
+        <select asp-for="ChosenProductId" asp-items="Model.Products" class="form-control">
+            <option> - Kies - </option>
+        </select>
+    </div>
+</div>

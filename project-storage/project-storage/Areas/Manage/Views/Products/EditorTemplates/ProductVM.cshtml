@@ -1,0 +1,30 @@
+﻿@model Project_storage.Areas.Manage.Models.Products.ProductVM
+
+<div class="form-group">
+    <div class="row">
+        <input asp-for="Id" type="hidden" />
+
+        <div class="col-md-4">
+            <div class="col-md-6">
+                <label class="control-label">Naam</label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="control-label">Prijs</label>
+                <input asp-for="Price" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="control-label">Categorie</label>
+                <select asp-for="ChosenCategoryId" asp-items="Model.Categories" class="form-control"></select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Shortdescription</label>
+            <textarea asp-for="ShortDescription" class="form-control" rows="5"></textarea>
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">LongDescription</label>
+            <textarea asp-for="LongDescription" class="form-control" rows="5"></textarea>
+        </div>
+    </div>
+</div>

@@ -36,6 +36,9 @@ namespace Project_storage
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "areas",
+                    template: "{area:exists}/{controller=Products}/{action=Index}/{id?}");
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Products}/{action=Index}/{id?}");
             });

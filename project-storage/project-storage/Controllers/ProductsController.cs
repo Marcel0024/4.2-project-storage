@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_storage.Data;
+using System.Linq;
 
 namespace Project_storage.Controllers
 {
@@ -39,7 +39,9 @@ namespace Project_storage.Controllers
                 price = po.Product.Price,
                 shortDescription = po.Product.ShortDescription,
                 category = po.Product.ProductCategory.Name,
-                location = po.Location.Name
+                location = po.Location.Name,
+                amount = po.Amount,
+                imageUrl = "http://via.placeholder.com/250?text=hoi"
             });
 
             return Json(new
@@ -47,6 +49,6 @@ namespace Project_storage.Controllers
                 total = results.Count(),
                 products = results
             });
-        }      
+        }       
     }
 }

@@ -11,9 +11,10 @@ using System;
 namespace Projectstorage.Data.Migrations
 {
     [DbContext(typeof(ProjectStorageContext))]
-    partial class ProjectStorageContextModelSnapshot : ModelSnapshot
+    [Migration("20180123142626_ProductOffer.Amount")]
+    partial class ProductOfferAmount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
