@@ -13,5 +13,7 @@ namespace Project_storage.Data.Models
         public virtual Location Location { get; set; }
 
         public int Amount { get; set; }
+
+        public string ImageUrl { get; set; }
     }
 }

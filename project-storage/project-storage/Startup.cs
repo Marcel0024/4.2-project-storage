@@ -33,6 +33,15 @@ namespace Project_storage
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(options => options.AllowAnyOrigin());
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("x-hello-human", "Hoi Micheal & Thijs & Dennie");
+                
+                await next.Invoke();
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

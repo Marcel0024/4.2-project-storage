@@ -36,7 +36,8 @@ namespace Project_storage.Areas.Manage.Controllers
                     Locations = _getLocations(),
                     ChosenProductId = p.Product.Id,
                     Products = _getProducts(p.Id),
-                    Amount = p.Amount
+                    Amount = p.Amount,
+                    ImageUrl = p.ImageUrl
                 }).ToList()
             };
 
@@ -73,6 +74,7 @@ namespace Project_storage.Areas.Manage.Controllers
                 productOfferDb.Location = location;
                 productOfferDb.Product = product;
                 productOfferDb.Amount = productOffer.Amount;
+                productOfferDb.ImageUrl = productOffer.ImageUrl;
 
                 await _projectStorageContext.SaveChangesAsync();
             }

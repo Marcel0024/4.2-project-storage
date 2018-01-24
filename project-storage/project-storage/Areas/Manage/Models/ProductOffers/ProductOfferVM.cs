@@ -19,5 +19,7 @@ namespace Project_storage.Areas.Manage.Models.ProductOffers
         public IEnumerable<SelectListItem> Products { get; set; }
 
         public int Amount { get; set; }
+
+        public string ImageUrl { get; set; }
     }
 }
