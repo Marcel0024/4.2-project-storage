@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Project_storage.Data;
+using System.Linq;
 
 namespace Project_storage
 {
@@ -38,9 +39,15 @@ namespace Project_storage
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("x-hello-human", "Hoi Micheal & Thijs & Dennie");
-                
+
                 await next.Invoke();
             });
+
+            using (var context = app.ApplicationServices.GetService<ProjectStorageContext>())
+            {
+                if (context.Database.GetPendingMigrations().Any())
+                    context.Database.Migrate();
+            }
 
             app.UseMvc(routes =>
             {
