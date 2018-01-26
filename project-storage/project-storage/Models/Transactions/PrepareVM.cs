@@ -7,10 +7,7 @@ namespace Project_storage.Models.Transactions
 {
     public class PrepareVM
     {
-        public PrepareVM()
-        {
-            Products = new List<Transactions.Products>();
-        }
+        public PrepareVM() => Products = new List<Products>();
 
         public string Token { get; set; }
 
