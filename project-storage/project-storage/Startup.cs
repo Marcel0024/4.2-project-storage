@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Project_storage.Data;
+using System;
 using System.Linq;
 
 namespace Project_storage
@@ -35,13 +37,23 @@ namespace Project_storage
             }
 
             app.UseCors(options => options.AllowAnyOrigin());
-
-            app.Use(async (context, next) =>
+            try
+            {
+                app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("x-hello-human", "Hoi Micheal & Thijs & Dennie");
 
                 await next.Invoke();
+
             });
+            }
+            catch (Exception e)
+            {
+                app.Run(async context =>
+                {
+                    await context.Response.WriteAsync(e.ToString());
+                });
+            }
 
             using (var context = app.ApplicationServices.GetService<ProjectStorageContext>())
             {

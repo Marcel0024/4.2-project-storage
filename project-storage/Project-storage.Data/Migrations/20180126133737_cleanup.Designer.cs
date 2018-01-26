@@ -11,9 +11,10 @@ using System;
 namespace Projectstorage.Data.Migrations
 {
     [DbContext(typeof(ProjectStorageContext))]
-    partial class ProjectStorageContextModelSnapshot : ModelSnapshot
+    [Migration("20180126133737_cleanup")]
+    partial class cleanup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

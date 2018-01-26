@@ -7,7 +7,6 @@ namespace Project_storage.Data
     public class ProjectStorageContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductOffer> ProductOffers { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
 

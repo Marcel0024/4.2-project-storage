@@ -25,24 +25,23 @@ namespace Project_storage.Controllers
         {
             return Json(new
             {
-               transactionId = GuidHelper.GenerateGuid().ToString("N"),
-               expirationDate = DateTime.UtcNow.AddHours(1).AddMinutes(5).ToString(),
-               products = vm.Products.Select(p => {
+                transactionId = GuidHelper.GenerateGuid().ToString("N"),
+                expirationDate = DateTime.UtcNow.AddHours(1).AddMinutes(5).ToString(),
+                products = vm.Products.Select(p =>
+                {
+                    var product = _projectStorageContext.Products.Find(Guid.Parse(p.Product_Id));
 
-                   var productOffer = _projectStorageContext.ProductOffers
-                   .Include(po => po.Product)
-                   .FirstOrDefault(po => po.Id == Guid.Parse(p.Product_Id));
-
-                   return new
-                   {
-                       productId = p.Product_Id,
-                       price = productOffer.Product.Price,
-                       name = productOffer.Product.Name,
-                       shorDescription = productOffer.Product.ShortDescription,
-                       available = productOffer.Amount, // Todo - subtract reserves
-                       result = "reserved"
-                   };
-               })
+                    return new
+                    {
+                        productId = p.Product_Id,
+                        price = product.Price,
+                        name = product.Name,
+                        shortDescription = product.ShortDescription,
+                        available = product.Amount, // Todo - subtract reserves,
+                        amountReserved = p.Amount,
+                        result = "reserved"
+                    };
+                })
             });
         }
     }

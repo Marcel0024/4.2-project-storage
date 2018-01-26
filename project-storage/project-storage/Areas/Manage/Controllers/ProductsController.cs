@@ -29,6 +29,7 @@ namespace Project_storage.Areas.Manage.Controllers
             {
                 Products = _projectStorageContext.Products
                 .Include(p => p.ProductCategory)
+                .Include(p => p.Location)
                 .ToList()
                 .Select(p => new ProductVM
                 {
@@ -38,12 +39,19 @@ namespace Project_storage.Areas.Manage.Controllers
                     ProductCategory = p.ProductCategory,
                     ShortDescription = p.ShortDescription,
                     LongDescription = p.LongDescription,
-                    ChosenCategoryId = p.ProductCategory.Id,
-                    Categories = _getProductCategories()
+                    ChosenLocationId = p.Location.Id,
+                    Locations = _getLocations(),
+                    ChosenProductCategory = p.ProductCategory.Id,
+                    Categories = _getProductCategories(),
+                    Amount = p.Amount,
+                    ImageUrl = p.ImageUrl
                 }).ToList()
             };
 
-            vm.Products.Add(new ProductVM { Categories = _getProductCategories() });
+            vm.Products.Add(new ProductVM {
+                Categories = _getProductCategories(),
+                Locations = _getLocations()
+            });
 
             return View(vm);
         }
@@ -69,8 +77,11 @@ namespace Project_storage.Areas.Manage.Controllers
                 productDb.ShortDescription = product.ShortDescription;
                 productDb.Name = product.Name;
                 productDb.Price = product.Price;
+                productDb.ImageUrl = product.ImageUrl;
+                productDb.Amount = product.Amount;
 
-                productDb.ProductCategory = _projectStorageContext.ProductCategories.Find(product.ChosenCategoryId);
+                productDb.ProductCategory = _projectStorageContext.ProductCategories.Find(product.ChosenProductCategory);
+                productDb.Location = _projectStorageContext.Locations.Find(product.ChosenLocationId);
 
                 await _projectStorageContext.SaveChangesAsync();
             }
@@ -84,6 +95,15 @@ namespace Project_storage.Areas.Manage.Controllers
                Text = pc.Name,
                Value = pc.Id.ToString(),
            }).ToList();
+        }
+
+        private IEnumerable<SelectListItem> _getLocations()
+        {
+            return _projectStorageContext.Locations.ToList().Select(l => new SelectListItem
+            {
+                Text = l.Name,
+                Value = l.Id.ToString()
+            });
         }
     }
 }
