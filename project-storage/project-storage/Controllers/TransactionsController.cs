@@ -44,5 +44,13 @@ namespace Project_storage.Controllers
                 })
             });
         }
+
+        [HttpPost]
+        public IActionResult Commit([FromBody] CommitVM vm)
+        {
+            // Todo return 400 if order not found
+
+            return Ok();
+        }
     }
 }
