@@ -11,9 +11,10 @@ using System;
 namespace Projectstorage.Data.Migrations
 {
     [DbContext(typeof(ProjectStorageContext))]
-    partial class ProjectStorageContextModelSnapshot : ModelSnapshot
+    [Migration("20180126114948_OneProduct")]
+    partial class OneProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,6 +81,28 @@ namespace Projectstorage.Data.Migrations
                     b.ToTable("ProductCategories");
                 });
 
+            modelBuilder.Entity("Project_storage.Data.Models.ProductOffer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Amount");
+
+                    b.Property<string>("ImageUrl");
+
+                    b.Property<Guid?>("LocationId");
+
+                    b.Property<Guid?>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductOffers");
+                });
+
             modelBuilder.Entity("Project_storage.Data.Models.Product", b =>
                 {
                     b.HasOne("Project_storage.Data.Models.Location", "Location")
@@ -89,6 +112,17 @@ namespace Projectstorage.Data.Migrations
                     b.HasOne("Project_storage.Data.Models.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId");
+                });
+
+            modelBuilder.Entity("Project_storage.Data.Models.ProductOffer", b =>
+                {
+                    b.HasOne("Project_storage.Data.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Project_storage.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
                 });
 #pragma warning restore 612, 618
         }

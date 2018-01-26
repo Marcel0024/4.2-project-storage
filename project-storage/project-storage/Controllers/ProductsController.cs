@@ -16,29 +16,26 @@ namespace Project_storage.Controllers
             _projectStorageContext = projectStorageContext;
         }
 
-        public IActionResult Index(string location = null, string category = null)
+        public IActionResult Index(string category = "")
         {
-            var products = _projectStorageContext.ProductOffers
-                .Include(po => po.Product).ThenInclude(p => p.ProductCategory)
+            var products = _projectStorageContext.Products
+                .Include(p => p.ProductCategory)
                 .Include(po => po.Location)
-                .AsQueryable();
+                .AsEnumerable();
 
-            if (!string.IsNullOrWhiteSpace(category))
-                products = products.Where(po => po.Product.ProductCategory.Id == Guid.Parse(category));
+            if (Guid.TryParse(category, out Guid parsedGuid))
+                products = products.Where(p => p.ProductCategory.Id == parsedGuid);
 
-            if (!string.IsNullOrWhiteSpace(location))
-                products = products.Where(po => po.Location.Name.ToLowerInvariant() == location.ToLowerInvariant());
-
-            var results = products.Select(po => new
+            var results = products.OrderBy(p => p.Price).Select(p => new
             {
-                id = po.Id.ToString("N"),
-                name = po.Product.Name,
-                price = po.Product.Price,
-                shortDescription = po.Product.ShortDescription,
-                location = po.Location.Name,
-                amount = po.Amount,
-                imageUrl = po.ImageUrl ?? _randomImageUrl(),
-                categoryId = po.Product.ProductCategory.Id.ToString("N")
+                id = p.Id.ToString("N"),
+                name = p.Name,
+                price = p.Price,
+                shortDescription = p.ShortDescription,
+                location = p.Location.Name,
+                amount = p.Amount,
+                imageUrl = p.ImageUrl ?? _randomImageUrl(),
+                categoryId = p.ProductCategory.Id.ToString("N")
             });
 
             return Json(new
@@ -63,9 +60,11 @@ namespace Project_storage.Controllers
                 "https://media.giphy.com/media/IITbm6ooxf5Xa/giphy.gif",
                 "https://media.giphy.com/media/7eVp9MHlNI90c/giphy.gif",
                 "https://media.giphy.com/media/UruEY4Y78edYk/giphy.gif",
-                "https://media.giphy.com/media/W8OqjAyhhJv2/giphy.gif"
+                "https://media.giphy.com/media/W8OqjAyhhJv2/giphy.gif",
+                "https://media.giphy.com/media/nxoHVeNF9ZLDa/giphy.gif",
+                "https://media.giphy.com/media/xD0kepGsYSVeE/giphy.gif"
             };
-            
+
             var index = random.Next(urls.Length);
 
             return urls[index];
