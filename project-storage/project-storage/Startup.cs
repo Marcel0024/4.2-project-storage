@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Project_storage.Data;
+using System.Linq;
 
 namespace Project_storage
 {
@@ -33,8 +34,26 @@ namespace Project_storage
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(options => options.AllowAnyOrigin());
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("x-hello-human", "Hoi Micheal & Thijs & Dennie");
+
+                await next.Invoke();
+            });
+
+            using (var context = app.ApplicationServices.GetService<ProjectStorageContext>())
+            {
+                if (context.Database.GetPendingMigrations().Any())
+                    context.Database.Migrate();
+            }
+
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                    name: "areas",
+                    template: "{area:exists}/{controller=Products}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Products}/{action=Index}/{id?}");
