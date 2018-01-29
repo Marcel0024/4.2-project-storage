@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project_storage.Data;
 
 namespace Project_storage.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         private ProjectStorageContext _projectStorageContext;
