@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Project_storage.Data;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Text;
 
 namespace Project_storage
 {
@@ -24,6 +28,30 @@ namespace Project_storage
         {
             services.AddDbContext<ProjectStorageContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ProjectStorageConnection")));
 
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            var section = Configuration.GetSection("JwtSettings");
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = section["JwtIssuer"],
+                        ValidAudience = section["JwtIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(section["JwtKey"])),
+                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                    };
+                });
+
             services.AddMvc();
         }
 
@@ -36,7 +64,7 @@ namespace Project_storage
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             try
             {
                 app.Use(async (context, next) =>
@@ -60,6 +88,8 @@ namespace Project_storage
                 if (context.Database.GetPendingMigrations().Any())
                     context.Database.Migrate();
             }
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

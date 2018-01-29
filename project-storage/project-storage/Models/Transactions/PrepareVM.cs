@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,10 +8,12 @@ namespace Project_storage.Models.Transactions
 {
     public class PrepareVM
     {
-        public PrepareVM() => Products = new List<Products>();
+        public PrepareVM()
+        {
+            Products = new List<Products>();
+        }
 
-        public string Token { get; set; }
-
+        [Required]
         public int Order_Id { get; set; }
 
         public int Status { get; set; }
@@ -20,8 +23,10 @@ namespace Project_storage.Models.Transactions
 
     public class Products
     {
+        [Required]
         public int Amount { get; set; }
 
+        [Required]
         public string Product_Id { get; set; }
     }
 }

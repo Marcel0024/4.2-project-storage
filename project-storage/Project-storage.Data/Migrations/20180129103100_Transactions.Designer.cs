@@ -8,13 +8,15 @@ using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Project_storage.Data;
 using Project_storage.Data.Enums;
 using System;
+using System.Transactions;
 
 namespace Projectstorage.Data.Migrations
 {
     [DbContext(typeof(ProjectStorageContext))]
-    partial class ProjectStorageContextModelSnapshot : ModelSnapshot
+    [Migration("20180129103100_Transactions")]
+    partial class Transactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,6 +91,8 @@ namespace Projectstorage.Data.Migrations
                     b.Property<DateTime>("ExpirationDate");
 
                     b.Property<int>("OrderId");
+
+                    b.Property<int>("Status");
 
                     b.HasKey("Id");
 

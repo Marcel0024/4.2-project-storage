@@ -10,6 +10,9 @@ namespace Project_storage.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<TransactionProduct> TransactionProducts { get; set; }
+
         public ProjectStorageContext(DbContextOptions<ProjectStorageContext> options)
             : base(options)
         {
