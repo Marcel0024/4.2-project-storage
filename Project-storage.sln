@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project-storage.Web", "project-storage\Project-storage.Web.csproj", "{BE049028-B720-4176-A484-383B6C3D8D7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project-storage.Web", "Project-storage.Web\Project-storage.Web.csproj", "{BE049028-B720-4176-A484-383B6C3D8D7C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project-storage.Data", "Project-storage.Data\Project-storage.Data.csproj", "{362AAE3C-6CB8-4EF5-8E49-3FDAEA4AE0F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-storage.Tests", "Project-Storage.Tests\Project-storage.Tests.csproj", "{E30C5114-375C-4B95-9434-788460FFCC7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-storage.Tests", "Project-storage.Tests\Project-storage.Tests.csproj", "{E30C5114-375C-4B95-9434-788460FFCC7A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project-storage.Logic", "Project-storage.Logic\Project-storage.Logic.csproj", "{B7C2EA58-42BC-4645-B52B-596C952708FC}"
 EndProject
