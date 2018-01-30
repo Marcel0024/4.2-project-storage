@@ -31,7 +31,7 @@ namespace Project_storage.Web.Controllers
             }
             else if (!string.IsNullOrWhiteSpace(category))
             {
-                return StatusCode(508, "Category not found");
+                return NotFound();
             }
 
             var results = products.OrderBy(p => p.Price).Select(p => new
