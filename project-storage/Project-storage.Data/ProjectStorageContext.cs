@@ -20,6 +20,8 @@ namespace Project_storage.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Transaction>().HasIndex(t => t.OrderId).IsUnique();
+
             base.OnModelCreating(builder);
         }
     }

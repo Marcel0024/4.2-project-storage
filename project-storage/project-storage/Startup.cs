@@ -65,23 +65,14 @@ namespace Project_storage
             }
 
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            try
+
+            app.Use(async (context, next) =>
             {
-                app.Use(async (context, next) =>
-            {
-                context.Response.Headers.Add("x-hello-human", "Hoi Micheal & Thijs & Dennie");
+                context.Response.Headers.Add("x-hanze", "Hoi");
 
                 await next.Invoke();
-
             });
-            }
-            catch (Exception e)
-            {
-                app.Run(async context =>
-                {
-                    await context.Response.WriteAsync(e.ToString());
-                });
-            }
+
 
             using (var context = app.ApplicationServices.GetService<ProjectStorageContext>())
             {

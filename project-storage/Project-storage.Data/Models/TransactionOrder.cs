@@ -9,6 +9,8 @@ namespace Project_storage.Data.Models
     {
         public Guid Id { get; set; }
 
+        public virtual Transaction Transaction { get; set; }
+
         public virtual Product Product { get; set; }
 
         public int Amount { get; set; }

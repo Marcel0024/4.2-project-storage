@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using Project_storage.Models.Transactions;
 
 namespace Project_storage.Controllers
 {
+   // [Authorize]
     public class TransactionsController : Controller
     {
         private ProjectStorageContext _projectStorageContext;
@@ -26,6 +28,10 @@ namespace Project_storage.Controllers
             _appSettings = appSettings.Value;
         }
 
+        /// <summary>
+        /// Prepare a order
+        /// Add products with reserve status
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Prepare([FromBody] PrepareVM vm)
         {
@@ -37,6 +43,84 @@ namespace Project_storage.Controllers
             if (transactionDb != null)
                 return BadRequest("OrderId already exist");
 
+            var transaction = await _storeTransaction(vm);
+
+            return Json(new
+            {
+                transactionId = transaction.Id.ToString("N"),
+                expirationDate = transaction.ExpirationDate.AddHours(1).ToString(),
+                products = transaction.TransactionOrders.Select(async to =>
+                {
+                    return new
+                    {
+                        productId = to.Product.Id.ToString("N"),
+                        price = to.Product.Price,
+                        name = to.Product.Name,
+                        shortDescription = to.Product.ShortDescription,
+                        available = await to.Product.AvailableAmount(_projectStorageContext),
+                        amountReserved = to.Amount,
+                        result = to.TransactionStatus.ToString().ToLowerInvariant()
+                    };
+                }).Select(t => t.Result)
+            });
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Commit([FromBody] CommitVM vm)
+        {
+            var transaction = await _projectStorageContext.Transactions
+                .Include(t => t.TransactionOrders).ThenInclude(to => to.Product)
+                .FirstOrDefaultAsync(t => t.OrderId == vm.Order_Id);
+
+            if (transaction == null)
+                return BadRequest("Order not found");
+
+            if (transaction.HasExpired() && transaction.TransactionOrders.Any(to => to.TransactionStatus == TransactionStatus.Reserved))
+            {
+                foreach (var transactionOrder in transaction.TransactionOrders)
+                {
+                    transactionOrder.TransactionStatus = TransactionStatus.Failed;
+                }
+
+                await _projectStorageContext.SaveChangesAsync();
+
+                return BadRequest("Transaction has expired");
+            }
+
+            foreach (var transactionOrder in transaction.TransactionOrders)
+            {
+                if (transactionOrder.TransactionStatus == TransactionStatus.Failed)
+                    continue;
+
+                if (transactionOrder.TransactionStatus == TransactionStatus.Success)
+                    continue;
+
+                if (transactionOrder.TransactionStatus == TransactionStatus.Reserved)
+                {
+                    if (vm.Status.ToLowerInvariant().Trim() == "success")
+                    {
+                        transactionOrder.Product.Amount = transactionOrder.Product.Amount - transactionOrder.Amount;
+                        transactionOrder.TransactionStatus = TransactionStatus.Success;
+                    }
+                    else
+                    {
+                        transactionOrder.TransactionStatus = TransactionStatus.Failed;
+                    }
+                }
+            }
+
+            await _projectStorageContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Saves the PrepareVM to database
+        /// </summary>
+        private async Task<Transaction> _storeTransaction(PrepareVM vm)
+        {
             var transaction = new Transaction
             {
                 Id = GuidHelper.GenerateGuid(),
@@ -63,94 +147,61 @@ namespace Project_storage.Controllers
             _projectStorageContext.Transactions.Add(transaction);
             await _projectStorageContext.SaveChangesAsync();
 
-            return Json(new
-            {
-                transactionId = transaction.Id.ToString("N"),
-                expirationDate = transaction.ExpirationDate.AddHours(1).ToString(),
-                products = transaction.TransactionOrders.Select(async to =>
-                {
-                    return new
-                    {
-                        productId = to.Product.Id.ToString("N"),
-                        price = to.Product.Price,
-                        name = to.Product.Name,
-                        shortDescription = to.Product.ShortDescription,
-                        available = await to.Product.AvailableAmount(_projectStorageContext),
-                        amountReserved = to.Amount,
-                        result = to.TransactionStatus.ToString().ToLowerInvariant()
-                    };
-                }).Select(t => t.Result)
-            });
+            return transaction;
         }
 
+        public IActionResult Authorized()
+        {
+            return Json(User.Identity.Name);
+        }
+
+        [AllowAnonymous]
         public async Task<IActionResult> ExpiredTransactions()
         {
-            try
-            {
-                var transactions = await _projectStorageContext.Transactions
-                    .Where(t => t.ExpirationDate < DateTime.UtcNow)
-                    .Where(t => t.TransactionOrders.Any(to => to.TransactionStatus == TransactionStatus.Reserved))
-                    .ToListAsync();
-
-                foreach (var transaction in transactions)
-                {
-                    foreach (var transactionOrder in transaction.TransactionOrders)
-                    {
-                        transactionOrder.TransactionStatus = TransactionStatus.Failed;
-                    }
-                }
-
-                return Ok();
-            }
-
-            catch (Exception e)
-            {
-                return StatusCode(400, e.ToString());
-            }
-        }
-
-        public async Task<IActionResult> Test()
-        {
-            var transactions = await _projectStorageContext.Transactions
-                .Include(t => t.TransactionOrders)
-                .ThenInclude(to => to.Product)
+            var transactionOrders = await _projectStorageContext.TransactionProducts
+                .Where(t => t.TransactionStatus == TransactionStatus.Reserved)
+                .Where(t => t.Transaction.HasExpired())
                 .ToListAsync();
 
-            return Json(transactions);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Commit([FromBody] CommitVM vm)
-        {
-            var transaction = await _projectStorageContext.Transactions
-                .Include(t => t.TransactionOrders).ThenInclude(to => to.Product)
-                .FirstOrDefaultAsync(t => t.OrderId == vm.Order_Id);
-
-            if (transaction == null)
-                return BadRequest("Order not found");
-
-            foreach (var transactionOrder in transaction.TransactionOrders)
-            {
-                if (transactionOrder.TransactionStatus == TransactionStatus.Reserved)
-                {
-                    if (vm.Status.ToLowerInvariant().Trim() == "success")
-                    {
-                        transactionOrder.Product.Amount = transactionOrder.Product.Amount - transactionOrder.Amount;
-                        transactionOrder.TransactionStatus = TransactionStatus.Success;
-                    }
-                    else
-                    {
-                        transactionOrder.TransactionStatus = TransactionStatus.Failed;
-                    }
-                }
-            }
+            foreach (var transactionOrder in transactionOrders)
+                transactionOrder.TransactionStatus = TransactionStatus.Failed;
 
             await _projectStorageContext.SaveChangesAsync();
 
             return Ok();
         }
 
+        [AllowAnonymous]
+        public IActionResult Status()
+        {
+            var transactions = _projectStorageContext.Transactions
+                .Include(t => t.TransactionOrders)
+                .ThenInclude(to => to.Product)
+                .ThenInclude(to => to.Location)
+                .OrderByDescending(to => to.ExpirationDate)
+                .ToList();
 
+            return Json(transactions.Select(t => new
+            {
+                id = t.Id,
+                expire = t.ExpirationDate.AddHours(1).ToString(),
+                orderId = t.OrderId,
+                products = t.TransactionOrders.Select(async p =>
+                new
+                {
+                    amount = p.Amount,
+                    status = p.TransactionStatus,
+                    product = new
+                    {
+                        name = p.Product.Name,
+                        available = await p.Product.AvailableAmount(_projectStorageContext),
+                        inDb = p.Product.Amount
+                    }
+                }).Select(to => to.Result)
+            }));
+        }
+
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteTransactions()
         {
             var transactionsP = await _projectStorageContext.TransactionProducts
@@ -161,8 +212,7 @@ namespace Project_storage.Controllers
                 _projectStorageContext.TransactionProducts.Remove(transaction);
             }
 
-            var transactions = await _projectStorageContext.Transactions
-                .ToListAsync();
+            var transactions = await _projectStorageContext.Transactions.ToListAsync();
 
             foreach (var transaction in transactions)
             {

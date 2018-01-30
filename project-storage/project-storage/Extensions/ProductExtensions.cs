@@ -16,6 +16,7 @@ namespace Project_storage.Extensions
             var pendingTransactions = await  _context.TransactionProducts
                 .Where(t => t.TransactionStatus == TransactionStatus.Reserved)
                 .Where(t => t.Product.Id == product.Id)
+                .Where(t => t.Transaction.ExpirationDate > DateTime.UtcNow)
                 .Select(t => t.Amount)
                 .ToListAsync();
 
