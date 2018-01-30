@@ -12,6 +12,9 @@ namespace Project_storage.Logic
         {
             foreach (var transactionOrder in transaction.TransactionOrders)
             {
+                if (status != TransactionStatus.Reserved)
+                    continue;
+
                 if (status == TransactionStatus.Success)
                     transactionOrder.Product.Amount = transactionOrder.Product.Amount - transactionOrder.Amount;
 

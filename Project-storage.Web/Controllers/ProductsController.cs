@@ -42,7 +42,7 @@ namespace Project_storage.Web.Controllers
                 shortDescription = p.ShortDescription,
                 location = p.Location.Name,
                 amount = p.AvailableAmount(_projectStorageContext.TransactionProducts),
-                imageUrl = p.ImageUrl ?? "https://5.imimg.com/data5/UA/UN/MY-33338350/fish-250x250.jpg",
+                imageUrl = p.ImageUrl ?? "https://ak0.picdn.net/shutterstock/videos/8802700/thumb/1.jpg",
                 categoryId = p.ProductCategory.Id.ToString("N")
             });
 
