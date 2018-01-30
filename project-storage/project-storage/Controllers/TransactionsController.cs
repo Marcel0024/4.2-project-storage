@@ -16,7 +16,7 @@ using Project_storage.Models.Transactions;
 
 namespace Project_storage.Controllers
 {
-   // [Authorize]
+    //[Authorize]
     public class TransactionsController : Controller
     {
         private ProjectStorageContext _projectStorageContext;
@@ -66,7 +66,9 @@ namespace Project_storage.Controllers
         }
 
 
-
+        /// <summary>
+        /// Action method to success / failed a transaction
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Commit([FromBody] CommitVM vm)
         {
@@ -79,41 +81,31 @@ namespace Project_storage.Controllers
 
             if (transaction.HasExpired() && transaction.TransactionOrders.Any(to => to.TransactionStatus == TransactionStatus.Reserved))
             {
-                foreach (var transactionOrder in transaction.TransactionOrders)
-                {
-                    transactionOrder.TransactionStatus = TransactionStatus.Failed;
-                }
-
-                await _projectStorageContext.SaveChangesAsync();
+                await _changeTransactionStatus(transaction, TransactionStatus.Failed);
 
                 return BadRequest("Transaction has expired");
             }
 
+            var newStatus = TransactionStatus.Failed;
+            if (vm.Status.ToLowerInvariant().Trim() == "success")
+                newStatus = TransactionStatus.Success;
+
+            await _changeTransactionStatus(transaction, newStatus);
+
+            return Ok();
+        }
+
+        private async Task _changeTransactionStatus(Transaction transaction, TransactionStatus status)
+        {
             foreach (var transactionOrder in transaction.TransactionOrders)
             {
-                if (transactionOrder.TransactionStatus == TransactionStatus.Failed)
-                    continue;
+                if (status == TransactionStatus.Success)
+                    transactionOrder.Product.Amount = transactionOrder.Product.Amount - transactionOrder.Amount;
 
-                if (transactionOrder.TransactionStatus == TransactionStatus.Success)
-                    continue;
-
-                if (transactionOrder.TransactionStatus == TransactionStatus.Reserved)
-                {
-                    if (vm.Status.ToLowerInvariant().Trim() == "success")
-                    {
-                        transactionOrder.Product.Amount = transactionOrder.Product.Amount - transactionOrder.Amount;
-                        transactionOrder.TransactionStatus = TransactionStatus.Success;
-                    }
-                    else
-                    {
-                        transactionOrder.TransactionStatus = TransactionStatus.Failed;
-                    }
-                }
+                transactionOrder.TransactionStatus = status;
             }
 
             await _projectStorageContext.SaveChangesAsync();
-
-            return Ok();
         }
 
         /// <summary>
