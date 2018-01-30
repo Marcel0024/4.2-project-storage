@@ -157,59 +157,5 @@ namespace Project_storage.Web.Controllers
 
             return Ok();
         }
-
-        [AllowAnonymous]
-        public IActionResult Status()
-        {
-            var transactions = _projectStorageContext.Transactions
-                .Include(t => t.TransactionOrders)
-                .ThenInclude(to => to.Product)
-                .ThenInclude(to => to.Location)
-                .OrderByDescending(to => to.ExpirationDate)
-                .ToList();
-
-            return Json(transactions.Select(t => new
-            {
-                id = t.Id.ToString("N"),
-                expire = t.ExpirationDate.AddHours(1).ToString(),
-                orderId = t.OrderId,
-                products = t.TransactionOrders.Select(p =>
-                new
-                {
-                    amount = p.Amount,
-                    status = p.TransactionStatus.ToString(),
-                    product = new
-                    {
-                        name = p.Product.Name,
-                        price = p.Product.Price,
-                        available = p.Product.AvailableAmount(_projectStorageContext.TransactionProducts),
-                        inDb = p.Product.Amount
-                    }
-                })
-            }));
-        }
-
-        //[AllowAnonymous]
-        //public async Task<IActionResult> DeleteTransactions()
-        //{
-        //    var transactionsP = await _projectStorageContext.TransactionProducts
-        //        .ToListAsync();
-
-        //    foreach (var transaction in transactionsP)
-        //    {
-        //        _projectStorageContext.TransactionProducts.Remove(transaction);
-        //    }
-
-        //    var transactions = await _projectStorageContext.Transactions.ToListAsync();
-
-        //    foreach (var transaction in transactions)
-        //    {
-        //        _projectStorageContext.Transactions.Remove(transaction);
-        //    }
-
-        //    await _projectStorageContext.SaveChangesAsync();
-
-        //    return Content("Success");
-        //}
     }
 }
