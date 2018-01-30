@@ -64,7 +64,6 @@ namespace Project_storage.Web.Controllers
             });
         }
 
-
         /// <summary>
         /// Action method to success / failed a transaction
         /// </summary>
@@ -116,13 +115,17 @@ namespace Project_storage.Web.Controllers
                     if (product == null)
                         return null;
 
+                    var transactionProducts = _projectStorageContext.TransactionProducts
+                    .Include(tp => tp.Transaction)
+                    .Include(tp => tp.Product);
+
                     return new TransactionProduct
                     {
                         Id = GuidHelper.GenerateGuid(),
                         Price = product.Price,
                         Amount = p.Amount,
                         Product = product,
-                        TransactionStatus = TransactionsLogic.CanReserveProduct(product, _projectStorageContext.TransactionProducts.Include(tp => tp.Transaction), p.Amount)
+                        TransactionStatus = TransactionsLogic.CanReserveProduct(product, transactionProducts, p.Amount)
                     };
                 }).Where(p => p != null).ToList()
             };
