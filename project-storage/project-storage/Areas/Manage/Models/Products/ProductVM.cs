@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Project_storage.Data.Models;
 
-namespace Project_storage.Areas.Manage.Models.Products
+namespace Project_storage.Web.Areas.Manage.Models.Products
 {
     public class ProductVM
     {

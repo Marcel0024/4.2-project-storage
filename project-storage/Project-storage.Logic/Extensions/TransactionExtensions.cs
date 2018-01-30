@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Project_storage.Extensions
+namespace Project_storage.Logic.Extensions
 {
     public static class TransactionExtensions
     {

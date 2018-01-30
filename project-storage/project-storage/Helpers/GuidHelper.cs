@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Project_storage.Helpers
+namespace Project_storage.Web.Helpers
 {
     public class GuidHelper
     {

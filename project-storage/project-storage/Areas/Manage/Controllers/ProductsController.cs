@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Project_storage.Areas.Manage.Models;
-using Project_storage.Areas.Manage.Models.Products;
 using Project_storage.Data;
 using Project_storage.Data.Models;
-using Project_storage.Helpers;
+using Project_storage.Web.Areas.Manage.Models.Products;
+using Project_storage.Web.Helpers;
 
-namespace Project_storage.Areas.Manage.Controllers
+namespace Project_storage.Web.Areas.Manage.Controllers
 {
     [Area("manage")]
     public class ProductsController : Controller
