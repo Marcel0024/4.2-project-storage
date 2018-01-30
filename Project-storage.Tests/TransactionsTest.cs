@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace Project_Storage.Tests
+namespace Project_storage.Tests
 {
     public class TransactionsTest
     {
