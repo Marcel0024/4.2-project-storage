@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Project_storage.Areas.Manage.Models.Products
+namespace Project_storage.Web.Areas.Manage.Models.Products
 {
     public class IndexVM
     {

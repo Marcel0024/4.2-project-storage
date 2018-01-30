@@ -12,7 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 
-namespace Project_storage
+namespace Project_storage.Web
 {
     public class Startup
     {

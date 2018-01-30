@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Project_storage.Extensions
+namespace Project_storage.Logic.Extensions
 {
     public static class ProductExtensions
     {
-        public static async Task<int> AvailableAmount(this Product product, ProjectStorageContext _context)
+        public static int AvailableAmount(this Product product, IQueryable<TransactionProduct> transactionProducts)
         {
-            var pendingTransactions = await  _context.TransactionProducts
+            var pendingTransactions = transactionProducts
                 .Where(t => t.TransactionStatus == TransactionStatus.Reserved)
                 .Where(t => t.Product.Id == product.Id)
                 .Where(t => t.Transaction.ExpirationDate > DateTime.UtcNow)
                 .Select(t => t.Amount)
-                .ToListAsync();
+                .ToList();
 
             int reservedAmount = pendingTransactions.Sum();
 

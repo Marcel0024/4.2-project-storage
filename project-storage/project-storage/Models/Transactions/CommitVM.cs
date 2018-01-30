@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Project_storage.Models.Transactions
+namespace Project_storage.Web.Models.Transactions
 {
     public class CommitVM
     {

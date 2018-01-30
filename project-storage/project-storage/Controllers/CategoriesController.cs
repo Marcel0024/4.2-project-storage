@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project_storage.Data;
 
-namespace Project_storage.Controllers
+namespace Project_storage.Web.Controllers
 {
     [Authorize]
     public class CategoriesController : Controller
