@@ -12,7 +12,7 @@ namespace Project_storage.Logic
         {
             foreach (var transactionOrder in transaction.TransactionOrders)
             {
-                if (status != TransactionStatus.Reserved)
+                if (transactionOrder.TransactionStatus != TransactionStatus.Reserved)
                     continue;
 
                 if (status == TransactionStatus.Success)

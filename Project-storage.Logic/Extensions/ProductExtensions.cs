@@ -1,11 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Project_storage.Data;
-using Project_storage.Data.Enums;
+﻿using Project_storage.Data.Enums;
 using Project_storage.Data.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project_storage.Logic.Extensions
 {
@@ -16,7 +12,7 @@ namespace Project_storage.Logic.Extensions
             var pendingTransactions = transactionProducts
                 .Where(t => t.TransactionStatus == TransactionStatus.Reserved)
                 .Where(t => t.Product.Id == product.Id)
-                .Where(t => t.Transaction.ExpirationDate > DateTime.UtcNow)
+                .Where(t => !t.Transaction.HasExpired())
                 .Select(t => t.Amount)
                 .ToList();
 
